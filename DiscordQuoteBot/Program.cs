@@ -7,7 +7,7 @@ namespace DiscordQuoteBot
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static void Main( string[] args )
 			=> new Program().MainAsync().GetAwaiter().GetResult();
 
 		public async Task MainAsync()
@@ -15,17 +15,17 @@ namespace DiscordQuoteBot
 			m_client = new DiscordSocketClient();
 			m_client.Log += Log;
 
-			var token = Environment.GetEnvironmentVariable("DiscordQuoteBotToken", EnvironmentVariableTarget.User);
-			await m_client.LoginAsync(TokenType.Bot, token);
+			var token = Environment.GetEnvironmentVariable( "DiscordQuoteBotToken", EnvironmentVariableTarget.User );
+			await m_client.LoginAsync( TokenType.Bot, token );
 			await m_client.StartAsync();
 
 			// Block this task until the program is closed.
-			await Task.Delay(-1);
+			await Task.Delay( -1 );
 		}
 
-		private Task Log(LogMessage msg)
+		private Task Log( LogMessage msg )
 		{
-			Console.WriteLine(msg.ToString());
+			Console.WriteLine( msg.ToString() );
 			return Task.CompletedTask;
 		}
 
