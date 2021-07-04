@@ -24,72 +24,14 @@ namespace DiscordQuoteBot
 			}
 		}
 
-		public static async Task CreateChannelInGuild( SocketGuild guild, ulong botUserId )
+		public static async Task CreateChannelInGuild( SocketGuild guild, IUser botUser )
 		{
 			var channel = guild.Channels.FirstOrDefault( x => ( x.Name == DiscordUtil.quoteBotEmojiString ) && ( x as SocketTextChannel != null ) );
 			if ( channel == null )
 			{
 				await guild.CreateTextChannelAsync( DiscordUtil.quoteBotEmojiString, x =>
 				{
-					List<Overwrite> permissionOverwrites = new List<Overwrite>( 2 );
-
-					// Set Everyone to read only
-					var everybodyRolePermissions = new OverwritePermissions(
-							PermValue.Inherit, // CreateInstantInvite
-							PermValue.Inherit, // ManageChannel
-							PermValue.Inherit, // addReactions
-							PermValue.Inherit, // viewChannel
-							PermValue.Deny, // sendMessages
-							PermValue.Inherit, // sendTTSMessages
-							PermValue.Inherit, // manageMessages
-							PermValue.Deny, // embedLinks
-							PermValue.Deny, // attachFiles
-							PermValue.Inherit, // readMessageHistory
-							PermValue.Deny, // mentionEveryone
-							PermValue.Inherit, // useExternalEmojis
-							PermValue.Inherit, // connect
-							PermValue.Inherit, // speak
-							PermValue.Inherit, // muteMembers
-							PermValue.Inherit, // deafenMembers
-							PermValue.Inherit, // moveMembers
-							PermValue.Inherit, // useVoiceActivation
-							PermValue.Inherit, // manageRoles
-							PermValue.Inherit, // manageWebhooks
-							PermValue.Inherit, // prioritySpeaker
-							PermValue.Inherit  // stream
-							);
-
-					// Allow the bot to write
-					var botUserPermissions = new OverwritePermissions(
-							PermValue.Inherit, // CreateInstantInvite
-							PermValue.Inherit, // ManageChannel
-							PermValue.Inherit, // addReactions
-							PermValue.Inherit, // viewChannel
-							PermValue.Allow, // sendMessages
-							PermValue.Inherit, // sendTTSMessages
-							PermValue.Inherit, // manageMessages
-							PermValue.Allow, // embedLinks
-							PermValue.Deny, // attachFiles
-							PermValue.Inherit, // readMessageHistory
-							PermValue.Deny, // mentionEveryone
-							PermValue.Inherit, // useExternalEmojis
-							PermValue.Inherit, // connect
-							PermValue.Inherit, // speak
-							PermValue.Inherit, // muteMembers
-							PermValue.Inherit, // deafenMembers
-							PermValue.Inherit, // moveMembers
-							PermValue.Inherit, // useVoiceActivation
-							PermValue.Inherit, // manageRoles
-							PermValue.Inherit, // manageWebhooks
-							PermValue.Inherit, // prioritySpeaker
-							PermValue.Inherit  // stream
-							);
-
-
-					permissionOverwrites.Add( new Overwrite( guild.EveryoneRole.Id, PermissionTarget.Role, everybodyRolePermissions ) );
-					permissionOverwrites.Add( new Overwrite( botUserId, PermissionTarget.User, botUserPermissions ) );
-
-					x.PermissionOverwrites = permissionOverwrites;
+					x.PermissionOverwrites = GeneratePermissionsOverwrites( guild, botUser.Id );
 				} );
 
 				Console.WriteLine( $"Created QuoteBot Channel for guild { guild.Name }" );
@@ -97,6 +39,12 @@ namespace DiscordQuoteBot
 			else
 			{
 				Console.WriteLine( $"QuoteBot Channel already exists for guild { guild.Name }" );
+				var permissionsOverwriteForBot = channel.GetPermissionOverwrite( botUser );
+				if ( permissionsOverwriteForBot == null )
+				{
+					await channel.AddPermissionOverwriteAsync( botUser, GenerateBotPermissions() );
+					Console.WriteLine( $"Added Permissions for QuoteBot Channel for guild { guild.Name }" );
+				}
 			}
 		}
 
@@ -163,6 +111,72 @@ namespace DiscordQuoteBot
 		{
 			var reaction = message.Reactions.FirstOrDefault( x => x.Key.Name.Contains( quoteBotEmojiString ) );
 			return reaction.Key != null && reaction.Value.ReactionCount > 1;
+		}
+
+		private static List<Overwrite> GeneratePermissionsOverwrites( SocketGuild guild, ulong botUserId )
+		{
+			List<Overwrite> permissionOverwrites = new List<Overwrite>( 2 );
+
+			// Set Everyone to read only
+			var everybodyRolePermissions = new OverwritePermissions(
+					PermValue.Inherit, // CreateInstantInvite
+					PermValue.Inherit, // ManageChannel
+					PermValue.Inherit, // addReactions
+					PermValue.Inherit, // viewChannel
+					PermValue.Deny, // sendMessages
+					PermValue.Inherit, // sendTTSMessages
+					PermValue.Inherit, // manageMessages
+					PermValue.Deny, // embedLinks
+					PermValue.Deny, // attachFiles
+					PermValue.Inherit, // readMessageHistory
+					PermValue.Deny, // mentionEveryone
+					PermValue.Inherit, // useExternalEmojis
+					PermValue.Inherit, // connect
+					PermValue.Inherit, // speak
+					PermValue.Inherit, // muteMembers
+					PermValue.Inherit, // deafenMembers
+					PermValue.Inherit, // moveMembers
+					PermValue.Inherit, // useVoiceActivation
+					PermValue.Inherit, // manageRoles
+					PermValue.Inherit, // manageWebhooks
+					PermValue.Inherit, // prioritySpeaker
+					PermValue.Inherit  // stream
+					);
+
+			OverwritePermissions botUserPermissions = GenerateBotPermissions();
+
+			permissionOverwrites.Add( new Overwrite( guild.EveryoneRole.Id, PermissionTarget.Role, everybodyRolePermissions ) );
+			permissionOverwrites.Add( new Overwrite( botUserId, PermissionTarget.User, botUserPermissions ) );
+			return permissionOverwrites;
+		}
+
+		private static OverwritePermissions GenerateBotPermissions()
+		{
+			// Allow the bot to write
+			return new OverwritePermissions(
+					PermValue.Inherit, // CreateInstantInvite
+					PermValue.Inherit, // ManageChannel
+					PermValue.Inherit, // addReactions
+					PermValue.Inherit, // viewChannel
+					PermValue.Allow, // sendMessages
+					PermValue.Inherit, // sendTTSMessages
+					PermValue.Inherit, // manageMessages
+					PermValue.Allow, // embedLinks
+					PermValue.Deny, // attachFiles
+					PermValue.Inherit, // readMessageHistory
+					PermValue.Deny, // mentionEveryone
+					PermValue.Inherit, // useExternalEmojis
+					PermValue.Inherit, // connect
+					PermValue.Inherit, // speak
+					PermValue.Inherit, // muteMembers
+					PermValue.Inherit, // deafenMembers
+					PermValue.Inherit, // moveMembers
+					PermValue.Inherit, // useVoiceActivation
+					PermValue.Inherit, // manageRoles
+					PermValue.Inherit, // manageWebhooks
+					PermValue.Inherit, // prioritySpeaker
+					PermValue.Inherit  // stream
+					);
 		}
 
 		public static string quoteBotEmojiString = "quotebot";

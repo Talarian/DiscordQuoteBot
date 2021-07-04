@@ -17,7 +17,7 @@ namespace DiscordQuoteBot
 		{
 			EmbedTitlesTuning.InstatiateEmbedTitlesTuning();
 
-			var config = new DiscordSocketConfig { MessageCacheSize = 100 };
+			var config = new DiscordSocketConfig { MessageCacheSize = 1000 };
 			m_client = new DiscordSocketClient( config );
 			m_client.Log += Log;
 
@@ -31,11 +31,18 @@ namespace DiscordQuoteBot
 			await m_client.LoginAsync( TokenType.Bot, token );
 			await m_client.StartAsync();
 
+			m_client.Ready += Ready;
 			m_client.ReactionAdded += ReactionAdded;
 			m_client.JoinedGuild += JoinedGuild;
 
 			// Block this task until the program is closed.
 			await Task.Delay( -1 );
+		}
+
+		private Task Ready()
+		{
+			Console.WriteLine( $"Logged in as { m_client.CurrentUser.Username }" );
+			return Task.CompletedTask;
 		}
 
 		private async Task JoinedGuild( SocketGuild guild )
@@ -52,7 +59,7 @@ namespace DiscordQuoteBot
 
 			try
 			{
-				await DiscordUtil.CreateChannelInGuild( guild, m_client.CurrentUser.Id );
+				await DiscordUtil.CreateChannelInGuild( guild, m_client.CurrentUser );
 			}
 			catch ( Exception e )
 			{
