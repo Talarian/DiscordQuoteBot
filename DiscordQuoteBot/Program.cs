@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System.IO;
 
 namespace DiscordQuoteBot
 {
@@ -35,7 +36,7 @@ namespace DiscordQuoteBot
 		{
 			try
 			{
-				await DiscordUtil.UploadEmojiToGuild( guild, "Data\\quotemark.png" );
+				await DiscordUtil.UploadEmojiToGuild( guild, Path.Combine( "Data", "quotemark.png" ) );
 			}
 			catch ( Exception e )
 			{
