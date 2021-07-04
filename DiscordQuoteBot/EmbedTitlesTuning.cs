@@ -11,7 +11,7 @@ namespace DiscordQuoteBot
 		{
 			if ( m_embedTitles.Count == 0 )
 			{
-				string path = $"Data{ Path.DirectorySeparatorChar }embedtitles.txt";
+				string path = $"Data/embedtitles.txt";
 				StreamReader reader = new StreamReader( path );
 
 				do
