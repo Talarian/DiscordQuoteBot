@@ -1,0 +1,8 @@
+{name} said, and I quote:
+Quoth {name}:
+{name} asserts:
+{name} does declare:
+{name} has something to say:
+I can't believe {name} actually said this:
+{name}, like, totally said:
+This was allegedly attributed to {name}:

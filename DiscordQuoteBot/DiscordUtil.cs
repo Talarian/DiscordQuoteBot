@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,6 +9,97 @@ namespace DiscordQuoteBot
 {
 	class DiscordUtil
 	{
+		public static async Task UploadEmojiToGuild( SocketGuild guild, string imagePath )
+		{
+			var emote = guild.Emotes.FirstOrDefault( x => x.Name == DiscordUtil.quoteBotEmojiString );
+			if ( emote == null )
+			{
+				Image icon = new Image( imagePath );
+				await guild.CreateEmoteAsync( DiscordUtil.quoteBotEmojiString, icon );
+				Console.WriteLine( $"Created QuoteBot Emoji for guild { guild.Name }" );
+			}
+			else
+			{
+				Console.WriteLine( $"QuoteBot Emoji already exists for guild { guild.Name }" );
+			}
+		}
+
+		public static async Task CreateChannelInGuild( SocketGuild guild, ulong botUserId )
+		{
+			var channel = guild.Channels.FirstOrDefault( x => ( x.Name == DiscordUtil.quoteBotEmojiString ) && ( x as SocketTextChannel != null ) );
+			if ( channel == null )
+			{
+				await guild.CreateTextChannelAsync( DiscordUtil.quoteBotEmojiString, x =>
+				{
+					List<Overwrite> permissionOverwrites = new List<Overwrite>( 2 );
+
+					// Set Everyone to read only
+					var everybodyRolePermissions = new OverwritePermissions(
+							PermValue.Inherit, // CreateInstantInvite
+							PermValue.Inherit, // ManageChannel
+							PermValue.Inherit, // addReactions
+							PermValue.Inherit, // viewChannel
+							PermValue.Deny, // sendMessages
+							PermValue.Inherit, // sendTTSMessages
+							PermValue.Inherit, // manageMessages
+							PermValue.Deny, // embedLinks
+							PermValue.Deny, // attachFiles
+							PermValue.Inherit, // readMessageHistory
+							PermValue.Deny, // mentionEveryone
+							PermValue.Inherit, // useExternalEmojis
+							PermValue.Inherit, // connect
+							PermValue.Inherit, // speak
+							PermValue.Inherit, // muteMembers
+							PermValue.Inherit, // deafenMembers
+							PermValue.Inherit, // moveMembers
+							PermValue.Inherit, // useVoiceActivation
+							PermValue.Inherit, // manageRoles
+							PermValue.Inherit, // manageWebhooks
+							PermValue.Inherit, // prioritySpeaker
+							PermValue.Inherit  // stream
+							);
+
+					// Allow the bot to write
+					var botUserPermissions = new OverwritePermissions(
+							PermValue.Inherit, // CreateInstantInvite
+							PermValue.Inherit, // ManageChannel
+							PermValue.Inherit, // addReactions
+							PermValue.Inherit, // viewChannel
+							PermValue.Allow, // sendMessages
+							PermValue.Inherit, // sendTTSMessages
+							PermValue.Inherit, // manageMessages
+							PermValue.Allow, // embedLinks
+							PermValue.Deny, // attachFiles
+							PermValue.Inherit, // readMessageHistory
+							PermValue.Deny, // mentionEveryone
+							PermValue.Inherit, // useExternalEmojis
+							PermValue.Inherit, // connect
+							PermValue.Inherit, // speak
+							PermValue.Inherit, // muteMembers
+							PermValue.Inherit, // deafenMembers
+							PermValue.Inherit, // moveMembers
+							PermValue.Inherit, // useVoiceActivation
+							PermValue.Inherit, // manageRoles
+							PermValue.Inherit, // manageWebhooks
+							PermValue.Inherit, // prioritySpeaker
+							PermValue.Inherit  // stream
+							);
+
+
+					permissionOverwrites.Add( new Overwrite( guild.EveryoneRole.Id, PermissionTarget.Role, everybodyRolePermissions ) );
+					permissionOverwrites.Add( new Overwrite( botUserId, PermissionTarget.User, botUserPermissions ) );
+
+					x.PermissionOverwrites = permissionOverwrites;
+				} );
+
+				Console.WriteLine( $"Created QuoteBot Channel for guild { guild.Name }" );
+			}
+			else
+			{
+				Console.WriteLine( $"QuoteBot Channel already exists for guild { guild.Name }" );
+			}
+		}
+
 		public static SocketGuild GetGuildFromChannelId( DiscordSocketClient client, ulong snowflakeIdOfChannelReceived )
 		{
 			foreach ( var guild in client.Guilds )
