@@ -21,7 +21,13 @@ namespace DiscordQuoteBot
 			m_client = new DiscordSocketClient( config );
 			m_client.Log += Log;
 
-			var token = Environment.GetEnvironmentVariable( "DiscordQuoteBotToken", EnvironmentVariableTarget.User );
+			// Linux doesn't have User environment variables, and Windows claims Process inherits the User variables, but in practice that didn't work
+			var token = Environment.GetEnvironmentVariable( "DiscordQuoteBotToken", EnvironmentVariableTarget.Process );
+			if ( string.IsNullOrEmpty( token ) )
+			{
+				token = Environment.GetEnvironmentVariable( "DiscordQuoteBotToken", EnvironmentVariableTarget.User );
+			}
+
 			await m_client.LoginAsync( TokenType.Bot, token );
 			await m_client.StartAsync();
 
@@ -36,8 +42,7 @@ namespace DiscordQuoteBot
 		{
 			try
 			{
-				string path = $"Data/quotemark.png";
-				await DiscordUtil.UploadEmojiToGuild( guild, path );
+				await DiscordUtil.UploadEmojiToGuild( guild, Path.Join( "Data", "quotemark.png" ) );
 			}
 			catch ( Exception e )
 			{

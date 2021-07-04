@@ -1,0 +1,35 @@
+Publish Process
+---------------
+
+* In Visual Studio, go to Build->Publish DiscordQuoteBot
+	* Should output somewhere like D:\DiscordQuoteBot\DiscordQuoteBot\bin\Release\netcoreapp3.1\linux-x64
+* Zip this up, and then use pscp to transfer to the Linux box
+	* "C:\Program Files\PuTTY\pscp" D:\DiscordQuoteBot\DiscordQuoteBot\bin\Release\netcoreapp3.1\DiscordQuoteBot-Linux64.zip user@serverIP:/home/user/DiscordQuoteBot-linux64.zip
+* SSH into the Linux box
+* $rm -r linux-x64
+* unzip DiscordQuoteBot-Linux64
+* cd linux-x64
+* chmod +x DiscordQuoteBot
+
+
+Running the App
+---------------
+
+* screen
+* ./DiscordQuoteBot
+* Ctrl-A Ctrl-D to detach the screen session
+* screen -r to resume the screen session
+
+
+Setting Environment Variable
+----------------------------
+
+For a new VM, you may need to set the key in the Bash config:
+* $nano /home/user/.bashrc
+
+# Content of the .bashrc file
+export DiscordQuoteBotToken="Token"
+
+Replace Token with the actual token.
+
+
