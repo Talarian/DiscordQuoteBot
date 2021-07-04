@@ -31,6 +31,7 @@ namespace DiscordQuoteBot
 			{
 				await guild.CreateTextChannelAsync( DiscordUtil.quoteBotEmojiString, x =>
 				{
+					x.Topic = "Add the :quotebot: reaction to quote something! Use !rq or !randomquote to pull a quote at random from the #quotebot channel!";
 					x.PermissionOverwrites = GeneratePermissionsOverwrites( guild, botUser.Id );
 				} );
 
