@@ -18,17 +18,28 @@ namespace DiscordQuoteBot
 				}
 			}
 
+			Console.WriteLine( $" No guild found for Channel Id { snowflakeIdOfChannelReceived }!" );
 			return null;
 		}
 
 		public static async Task SendErrorToGuild( ulong snowflakeIdOfChannelReceived, SocketGuild guildReceived, string errorMessage )
 		{
-			var receivedChannel = guildReceived.Channels.FirstOrDefault( x => x.Id == snowflakeIdOfChannelReceived ) as SocketTextChannel;
-			if ( receivedChannel != null )
+			try
 			{
-				await receivedChannel.SendMessageAsync( errorMessage );
+				var receivedChannel = guildReceived.Channels.FirstOrDefault( x => x.Id == snowflakeIdOfChannelReceived ) as SocketTextChannel;
+				if ( receivedChannel != null )
+				{
+					await receivedChannel.SendMessageAsync( errorMessage );
+				}
 			}
-			Console.WriteLine( $" { errorMessage } on server { guildReceived.Name }!" );
+			catch ( Exception e )
+			{
+				Console.WriteLine( $"Exception sending Error for guild { guildReceived.Name }; { e.Message }" );
+			}
+			finally
+			{
+				Console.WriteLine( $" { errorMessage } on server { guildReceived.Name }!" );
+			}
 		}
 
 		public static async Task<SocketTextChannel> GetQuoteBotChannelForGuild( SocketGuild guild, ulong snowflakeIdOfChannelReceived )
