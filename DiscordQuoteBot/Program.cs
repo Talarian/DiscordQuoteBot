@@ -36,7 +36,7 @@ namespace DiscordQuoteBot
 		{
 			try
 			{
-				await DiscordUtil.UploadEmojiToGuild( guild, Path.Combine( "Data", "quotemark.png" ) );
+				await DiscordUtil.UploadEmojiToGuild( guild, Path.Join( "Data", "quotemark.png" ) );
 			}
 			catch ( Exception e )
 			{
