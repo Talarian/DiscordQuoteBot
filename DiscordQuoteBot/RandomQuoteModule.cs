@@ -13,7 +13,18 @@ namespace DiscordQuoteBot
 		public async Task RandomQuoteAsync()
 		{
 			Console.WriteLine( $"RandomQuote Called for { Context.Guild.Name } in Channel { Context.Channel.Name }" );
+			await RandomQuoteRunAsync();
+		}
 
+		[Command( "rq" )]
+		public async Task RandomQuoteAsyncShort()
+		{
+			Console.WriteLine( $"rq Called for { Context.Guild.Name } in Channel { Context.Channel.Name }" );
+			await RandomQuoteRunAsync();
+		}
+
+		private async Task RandomQuoteRunAsync()
+		{
 			// Ooof, this is gonna get expensive, also limited to last 500 messages
 			// Longer term, we're going to need a way to build our own cache and fill it slowly over time
 			// To grab random quotes from
