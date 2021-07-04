@@ -17,6 +17,7 @@ namespace DiscordQuoteBot
 			// Ooof, this is gonna get expensive, also limited to last 500 messages
 			// Longer term, we're going to need a way to build our own cache and fill it slowly over time
 			// To grab random quotes from
+			// Note Discord has a command timeout of 3 seconds
 
 			using ( PerfTimer perfTimer = new PerfTimer( "RandomQuoteAsync" ) )
 			{
