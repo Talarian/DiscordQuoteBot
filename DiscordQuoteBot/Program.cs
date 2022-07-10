@@ -30,7 +30,7 @@ namespace DiscordQuoteBot
 			}
 
 			CommandService commandService = new CommandService();
-			DependencyInjector dependencyInjector = new DependencyInjector( commandService, client );
+			DependencyInjector dependencyInjector = new DependencyInjector( commandService, client, new QuoteCache() );
 			var serviceProvider = dependencyInjector.BuildServiceProvider();
 
 			m_commandHandler = new DiscordCommandHandler( serviceProvider, commandService, client );

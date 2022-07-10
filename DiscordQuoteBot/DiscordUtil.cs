@@ -100,6 +100,12 @@ namespace DiscordQuoteBot
 				return null;
 			}
 
+			if ( channel.Id == snowflakeIdOfChannelReceived )
+			{
+				await SendErrorToGuild( snowflakeIdOfChannelReceived, guild, $"Sending commands through the \"quotebot\" channel is not supported" );
+				return null;
+			}
+
 			return textChannel;
 		}
 

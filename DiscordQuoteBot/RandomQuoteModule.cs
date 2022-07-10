@@ -8,6 +8,13 @@ namespace DiscordQuoteBot
 {
 	public class RandomQuoteModule : ModuleBase<SocketCommandContext>
 	{
+		private QuoteCache m_quoteCache;
+
+		public RandomQuoteModule( QuoteCache quoteCache )
+		{
+			m_quoteCache = quoteCache;
+		}
+
 		[Command( "randomquote" )]
 		[Summary( "Grabs a random quote from the #quotebot channel" )]
 		public async Task RandomQuoteAsync()
@@ -32,13 +39,7 @@ namespace DiscordQuoteBot
 
 			using ( PerfTimer perfTimer = new PerfTimer( "RandomQuoteAsync" ) )
 			{
-				var quoteBotChannel = await DiscordUtil.GetQuoteBotChannelForGuild( Context.Guild, Context.Channel.Id );
-				var messages = await quoteBotChannel.GetMessagesAsync( 500 ).FlattenAsync();
-				var messageList = messages.ToList();
-				var random = new Random();
-
-				var randomMessage = messageList[ random.Next( 0, messageList.Count ) ];
-				var embed = randomMessage.Embeds.First() as Embed;
+				var embed = await m_quoteCache.GetRandomQuoteEmbedAsync( Context );
 
 				await Context.Channel.SendMessageAsync( null, false, embed );
 			}
