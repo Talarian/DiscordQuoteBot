@@ -32,7 +32,7 @@ namespace DiscordQuoteBot
 			return Task.CompletedTask;
 		}
 
-		private async Task ReactionAdded( Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel originChannel, SocketReaction reaction )
+		private async Task ReactionAdded( Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> originChannel, SocketReaction reaction )
 		{
 			if ( !DiscordUtil.ReactionIsQuoteBot( reaction ) )
 			{
@@ -57,7 +57,7 @@ namespace DiscordQuoteBot
 				return;
 			}
 
-			EmbedBuilder builder = GenerateEmbed( originChannel, message, guild );
+			EmbedBuilder builder = GenerateEmbed( originChannel.Id, message, guild );
 
 			try
 			{
@@ -93,9 +93,9 @@ namespace DiscordQuoteBot
 			}
 		}
 
-		private static EmbedBuilder GenerateEmbed( ISocketMessageChannel originChannel, IUserMessage message, SocketGuild guild )
+		private static EmbedBuilder GenerateEmbed( ulong originChannelId, IUserMessage message, SocketGuild guild )
 		{
-			string link = $"https://discord.com/channels/{ guild.Id }/{ originChannel.Id }/{ message.Id }";
+			string link = $"https://discord.com/channels/{ guild.Id }/{ originChannelId }/{ message.Id }";
 
 			var author = new EmbedAuthorBuilder()
 				.WithName( message.Author.Username )
