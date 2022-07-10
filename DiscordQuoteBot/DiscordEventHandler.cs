@@ -45,6 +45,11 @@ namespace DiscordQuoteBot
 				return;
 			}
 
+			if ( string.IsNullOrEmpty( message.Content ) )
+			{
+				return;
+			}
+
 			var guild = DiscordUtil.GetGuildFromChannelId( m_client, originChannel.Id );
 			if ( guild == null )
 			{
