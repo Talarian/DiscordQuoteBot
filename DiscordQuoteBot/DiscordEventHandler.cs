@@ -61,7 +61,7 @@ namespace DiscordQuoteBot
 
 			try
 			{
-				await botChannel.SendMessageAsync( null, false, builder.Build() );
+				await botChannel.SendMessageAsync( null, false, builder.Build(), null, AllowedMentions.None );
 			}
 			catch ( Exception e )
 			{

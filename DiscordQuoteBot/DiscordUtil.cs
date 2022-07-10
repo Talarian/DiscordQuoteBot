@@ -70,7 +70,7 @@ namespace DiscordQuoteBot
 				var receivedChannel = guildReceived.Channels.FirstOrDefault( x => x.Id == snowflakeIdOfChannelReceived ) as SocketTextChannel;
 				if ( receivedChannel != null )
 				{
-					await receivedChannel.SendMessageAsync( errorMessage );
+					await receivedChannel.SendMessageAsync( errorMessage, false, null, null, AllowedMentions.None );
 				}
 			}
 			catch ( Exception e )

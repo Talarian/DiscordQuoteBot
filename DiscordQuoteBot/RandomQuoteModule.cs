@@ -41,7 +41,7 @@ namespace DiscordQuoteBot
 			{
 				var embed = await m_quoteCache.GetRandomQuoteEmbedAsync( Context );
 
-				await Context.Channel.SendMessageAsync( null, false, embed );
+				await Context.Channel.SendMessageAsync( null, false, embed, null, AllowedMentions.None );
 			}
 		}
 	}
